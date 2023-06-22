@@ -109,5 +109,6 @@ namespace CapMobileWebApp.DAL.Model
         public string GuarantorCompanyName { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal? GuarantorSalary { get; set; }
+        public long? CreatedBy { get; set; }
     }
 }

@@ -45,6 +45,7 @@ namespace CapMobileWebApp.DAL.Context
         public virtual DbSet<GlinstallmentOtp> GlinstallmentOtp { get; set; }
         public virtual DbSet<GroupMember> GroupMember { get; set; }
         public virtual DbSet<GroupTrainingProcess> GroupTrainingProcess { get; set; }
+        public virtual DbSet<Guarantor> Guarantor { get; set; }
         public virtual DbSet<ImportwithAccount> ImportwithAccount { get; set; }
         public virtual DbSet<LoanAccount> LoanAccount { get; set; }
         public virtual DbSet<LoanApplicant> LoanApplicant { get; set; }
@@ -57,6 +58,7 @@ namespace CapMobileWebApp.DAL.Context
         public virtual DbSet<Mbbattendance> Mbbattendance { get; set; }
         public virtual DbSet<MeetingParticipants> MeetingParticipants { get; set; }
         public virtual DbSet<MemberLimit> MemberLimit { get; set; }
+        public virtual DbSet<Nominee> Nominee { get; set; }
         public virtual DbSet<Process> Process { get; set; }
         public virtual DbSet<Question> Question { get; set; }
         public virtual DbSet<Role> Role { get; set; }
@@ -870,6 +872,11 @@ namespace CapMobileWebApp.DAL.Context
                     .HasColumnName("VEBusinessActivity");
 
                 entity.Property(e => e.VoterIdcardno).HasMaxLength(50);
+
+                entity.HasOne(d => d.CreatedByNavigation)
+                    .WithMany(p => p.Customer)
+                    .HasForeignKey(d => d.CreatedBy)
+                    .HasConstraintName("FK_Customer_UserInfo");
             });
 
             modelBuilder.Entity<CustomerDetails>(entity =>
@@ -1082,6 +1089,30 @@ namespace CapMobileWebApp.DAL.Context
                     .HasForeignKey(d => d.ProcessId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_GroupTrainingProcess_Process");
+            });
+
+            modelBuilder.Entity<Guarantor>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("ID");
+
+                entity.Property(e => e.CompanyName).HasMaxLength(300);
+
+                entity.Property(e => e.Dob)
+                    .HasColumnType("datetime")
+                    .HasColumnName("DOB");
+
+                entity.Property(e => e.Gender).HasMaxLength(50);
+
+                entity.Property(e => e.Mobile).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(200);
+
+                entity.Property(e => e.Salary).HasMaxLength(50);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Guarantor)
+                    .HasForeignKey(d => d.CustomerId)
+                    .HasConstraintName("FK_Guarantor_Customer");
             });
 
             modelBuilder.Entity<ImportwithAccount>(entity =>
@@ -1403,6 +1434,31 @@ namespace CapMobileWebApp.DAL.Context
             modelBuilder.Entity<MemberLimit>(entity =>
             {
                 entity.Property(e => e.Description).HasMaxLength(101);
+            });
+
+            modelBuilder.Entity<Nominee>(entity =>
+            {
+                entity.Property(e => e.Aadhar).HasMaxLength(50);
+
+                entity.Property(e => e.Appointe).HasMaxLength(50);
+
+                entity.Property(e => e.Gender).HasMaxLength(50);
+
+                entity.Property(e => e.Mobile).HasMaxLength(50);
+
+                entity.Property(e => e.Name).HasMaxLength(200);
+
+                entity.Property(e => e.Pan)
+                    .HasMaxLength(50)
+                    .HasColumnName("PAN");
+
+                entity.Property(e => e.Relation).HasMaxLength(100);
+
+                entity.HasOne(d => d.Customer)
+                    .WithMany(p => p.Nominee)
+                    .HasForeignKey(d => d.CustomerId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Nominee_Customer");
             });
 
             modelBuilder.Entity<Process>(entity =>

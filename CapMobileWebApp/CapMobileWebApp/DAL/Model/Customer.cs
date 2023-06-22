@@ -11,6 +11,8 @@ namespace CapMobileWebApp.DAL.Model
         {
             CashFlowBusiness = new HashSet<CashFlowBusiness>();
             CashFlowSalary = new HashSet<CashFlowSalary>();
+            Guarantor = new HashSet<Guarantor>();
+            Nominee = new HashSet<Nominee>();
             SecurityAnswers = new HashSet<SecurityAnswers>();
         }
 
@@ -113,9 +115,13 @@ namespace CapMobileWebApp.DAL.Model
         public byte[] GuarantorPhoto { get; set; }
         public string GuarantorCompanyName { get; set; }
         public decimal? GuarantorSalary { get; set; }
+        public long? CreatedBy { get; set; }
 
+        public virtual UserInfo CreatedByNavigation { get; set; }
         public virtual ICollection<CashFlowBusiness> CashFlowBusiness { get; set; }
         public virtual ICollection<CashFlowSalary> CashFlowSalary { get; set; }
+        public virtual ICollection<Guarantor> Guarantor { get; set; }
+        public virtual ICollection<Nominee> Nominee { get; set; }
         public virtual ICollection<SecurityAnswers> SecurityAnswers { get; set; }
     }
 }

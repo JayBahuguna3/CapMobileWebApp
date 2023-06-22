@@ -9,6 +9,7 @@ namespace CapMobileWebApp.DAL.Model
     {
         public UserInfo()
         {
+            Customer = new HashSet<Customer>();
             SecurityAnswers = new HashSet<SecurityAnswers>();
         }
 
@@ -26,6 +27,7 @@ namespace CapMobileWebApp.DAL.Model
         public string UserMobileNo { get; set; }
         public long? AssociatedBeid { get; set; }
 
+        public virtual ICollection<Customer> Customer { get; set; }
         public virtual ICollection<SecurityAnswers> SecurityAnswers { get; set; }
     }
 }

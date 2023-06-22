@@ -119,6 +119,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[Guarantor]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[ImportwithAccount]",
          "ObjectType": 0
       },
@@ -164,6 +168,10 @@
       },
       {
          "Name": "[dbo].[MemberLimit]",
+         "ObjectType": 0
+      },
+      {
+         "Name": "[dbo].[Nominee]",
          "ObjectType": 0
       },
       {

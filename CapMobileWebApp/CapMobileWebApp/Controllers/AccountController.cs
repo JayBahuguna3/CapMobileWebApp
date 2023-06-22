@@ -51,6 +51,7 @@ namespace CapMobileWebApp.Controllers
                             var claims = new List<Claim> {
                                         new Claim(ClaimTypes.Name, user.Username),
                                         new Claim("FullName", user.EmployeeName),
+                                        new Claim("UserId", user.UserId.ToString()),
                                         new Claim(ClaimTypes.Role, user.RoleId.ToString()),
                                         new Claim("Designation", user.Designation.ToString()),
                                     };
@@ -114,7 +115,7 @@ namespace CapMobileWebApp.Controllers
             }
             else
             {
-                return RedirectToPage("/");
+                return RedirectToAction("login");
             }
         }
     }

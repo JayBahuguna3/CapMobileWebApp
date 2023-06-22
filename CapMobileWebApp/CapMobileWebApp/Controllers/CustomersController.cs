@@ -7,14 +7,15 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapMobileWebApp.DAL.Context;
 using CapMobileWebApp.DAL.Model;
+using CapMobileWebApp.Services;
 
 namespace CapMobileWebApp.Controllers
 {
-    public class CustomersController : Controller
+    public class CustomersController : ParentController
     {
         private readonly CapRetailContext _context;
 
-        public CustomersController(CapRetailContext context)
+        public CustomersController(CapRetailContext context, UserService userService) : base(userService)
         {
             _context = context;
         }
@@ -60,6 +61,8 @@ namespace CapMobileWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
+                this.userInfo = _userService.GetUserInfo(User);
+                customer.CreatedBy = this.userInfo.UserId;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

@@ -1,0 +1,173 @@
+﻿@model IEnumerable<CapMobileWebApp.DAL.Model.CashFlowBusiness>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IncomingCash)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncomingSales)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IncomingReceivables)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OtherIncome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalIncome)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LoanEmi)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rent)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MaterialPurchase)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SalariesAndWages)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MarketingExp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PhoneBills)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Internet)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ElectricityBill)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MotorFuelExpenses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TransportationExpenses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MotorMaintenanceExp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Insurance)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Taxes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Utility)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GeneralAndAdministrative)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MedicalExp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MiscellaneousExp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalOutgoing)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Customer)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncomingCash)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncomingSales)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.IncomingReceivables)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OtherIncome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalIncome)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LoanEmi)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rent)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MaterialPurchase)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalariesAndWages)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MarketingExp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PhoneBills)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Internet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ElectricityBill)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MotorFuelExpenses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransportationExpenses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MotorMaintenanceExp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Insurance)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Taxes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Utility)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GeneralAndAdministrative)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MedicalExp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MiscellaneousExp)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TotalOutgoing)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.City)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
