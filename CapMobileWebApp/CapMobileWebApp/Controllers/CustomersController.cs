@@ -47,8 +47,17 @@ namespace CapMobileWebApp.Controllers
         }
 
         // GET: Customers/Create
-        public IActionResult Create()
+        public IActionResult Create(int customerid = 0)
         {
+            if (customerid > 0)
+            {
+                var cust = _context.Customer.Where(e => e.CustomerId == customerid).FirstOrDefault();
+                if (cust != null)
+                {
+                    return View(cust);
+                }
+            }
+
             return View();
         }
 
@@ -56,7 +65,7 @@ namespace CapMobileWebApp.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        [ValidateAntiForgeryToken]  
         public async Task<IActionResult> Create([Bind("CustomerId,CustomerName,AccountDate,ResAddress,OffAddress,TelPhoneNo,MobileNo,PhotoIdentityNumber,PanCardNo,BirthDate,Age,ActiveBy,City,Mstate,EmailId,Pincode,Photoid,Mphoto,Idtype,Memactive,GroupId,BranchId,LastModifiedBy,Approval,ManagerId,Csrapprove,Prpoposedloanamount,ManagerRemark,Csrremark,Mangerdate,Csrdate,LoanTypeid,LoanCycleNo,MartialStatus,SpouseName,SpouseDob,NomineeName,NomineeAge,NomineeRelation,Status,Reason,Religion,Caste,Gender,ApplicantFather,FamilyDetails,FamilyRelation,Rationcardno,VoterIdcardno,Uidno,LoanPurpose,Idproof1,Idproof2,OriginatorId,OfficerChangeDate,CustomerSign,FamilyDetails2,FamilyRelation2,FamilyDetails3,FamilyRelation3,FamilyDetails4,FamilyRelation4,TebusinessActivity,VebusinessActivity,ApplicantName,ActivityConfirmation,CreditHistory,VerificationOfDocs,DvecustomerApproval,DvecustomerApprovalDateTime,ExActiveCustId,ExActiveLoanAc,IsReLoan,IsExistingLoanClose,IsTopupLoan,CustomerGender,CustomerAadharAddress,CustomerCurrentAddress,CustomerDistrict,CustomerTaluka,CustomerVillage,CustomerLat,CustomerLong,CustomerLoanApplicationDate,CustomerDrivingLicNo,CustomerEducation,CustomerCategory,CustomerLoanType,NomineeAadharCard,NomineePanCard,NomineeMobileNo,GuarantorName,GuarantorAddress,GuarantorGender,GuarantorMobileNo,GuarantorDob,GuarantorPhoto,GuarantorCompanyName,GuarantorSalary")] Customer customer)
         {
             if (ModelState.IsValid)
@@ -65,9 +74,49 @@ namespace CapMobileWebApp.Controllers
                 customer.CreatedBy = this.userInfo.UserId;
                 _context.Add(customer);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index","Home");
             }
             return View(customer);
+        }
+
+        public IActionResult ChooseCustomer()
+        {
+            var user = this._userService.GetUserInfo(User);
+            if (user != null)
+            {
+                ViewData["CustomerId"] = new SelectList(_context.Customer
+                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName");
+            }
+            else
+            {
+                ViewData["CustomerId"] = new SelectList(new List<Customer>());
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ChooseCustomer([Bind("CustomerId,CustomerName")] Customer customer)
+        {
+            if (customer != null && !string.IsNullOrWhiteSpace(customer.CustomerId.ToString())) {
+                var custCategory = _context.Customer.Where(e => e.CustomerId == customer.CustomerId).Select(e => e.CustomerCategory).FirstOrDefault();
+                if (custCategory.ToString() == "Salary")
+                {
+                    return RedirectToActionPermanent("Create", "CashFlowSalaries", new { customerid = customer.CustomerId });
+                }
+                else if(custCategory.ToString() == "Business")
+                {
+                    return RedirectToActionPermanent("Create", "CashFlowBusinesses", new { customerid = customer.CustomerId });
+                }
+                else
+                {
+                    ModelState.AddModelError("IncorrectCustomer", "User Category not found");
+                    return View();
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("NoSelection", "Customer not selected");
+                return View();
+            }
         }
 
         // GET: Customers/Edit/5

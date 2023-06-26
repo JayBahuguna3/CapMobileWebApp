@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapMobileWebApp.DAL.Context;
 using CapMobileWebApp.DAL.Model;
+using CapMobileWebApp.Services;
 
 namespace CapMobileWebApp.Controllers
 {
@@ -14,7 +15,7 @@ namespace CapMobileWebApp.Controllers
     {
         private readonly CapRetailContext _context;
 
-        public NomineesController(CapRetailContext context)
+        public NomineesController(CapRetailContext context, UserService userService) : base(userService)
         {
             _context = context;
         }
@@ -46,9 +47,42 @@ namespace CapMobileWebApp.Controllers
         }
 
         // GET: Nominees/Create
-        public IActionResult Create()
+        //public IActionResult Create()
+        //{
+        //    var user = this._userService.GetUserInfo(User);
+        //    if (user != null)
+        //    {
+        //        ViewData["CustomerId"] = new SelectList(_context.Customer
+        //        .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName");
+        //    }
+        //    else
+        //    {
+        //        ViewData["CustomerId"] = new SelectList(new List<Customer>());
+        //    }
+        //    return View();
+        //}
+
+        public IActionResult Create(int customerid)
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "City");
+            var user = this._userService.GetUserInfo(User);
+            if (user != null)
+            {
+                ViewData["CustomerId"] = new SelectList(_context.Customer
+                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName", customerid);
+            }
+            else
+            {
+                ViewData["CustomerId"] = new SelectList(new List<Customer>());
+            }
+            if (customerid != null)
+            {
+                var cust = _context.Nominee.Where(e => e.CustomerId == customerid).FirstOrDefault();
+                if (cust != null)
+                {
+                    return View(cust);
+                }
+            }
+
             return View();
         }
 
@@ -61,11 +95,24 @@ namespace CapMobileWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(nominee);
+                if (nominee.Id > 0)
+                {
+                    _context.Update(nominee);
+                }
+                else if (nominee.Id == 0)
+                {
+                    _context.Add(nominee);
+                }
+                else
+                {
+                    ModelState.AddModelError("NoID", "No nominee id found.");
+                    return View(nominee);
+
+                }
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Home");
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "City", nominee.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerName", nominee.CustomerId);
             return View(nominee);
         }
 
@@ -164,5 +211,34 @@ namespace CapMobileWebApp.Controllers
         {
           return (_context.Nominee?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public IActionResult ChooseCustomer()
+        {
+            var user = this._userService.GetUserInfo(User);
+            if (user != null)
+            {
+                ViewData["CustomerId"] = new SelectList(_context.Customer
+                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName");
+            }
+            else
+            {
+                ViewData["CustomerId"] = new SelectList(new List<Customer>());
+            }
+            return View();
+        }
+        [HttpPost]
+        public IActionResult ChooseCustomer([Bind("CustomerId,CustomerName")] Customer customer)
+        {
+            if (customer != null && !string.IsNullOrWhiteSpace(customer.CustomerId.ToString()))
+            {
+                return RedirectToActionPermanent("Create", new { customerid = customer.CustomerId });
+            }
+            else
+            {
+                ModelState.AddModelError("NoSelection", "Customer not selected");
+                return View();
+            }
+        }
+
     }
 }

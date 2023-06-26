@@ -48,19 +48,42 @@ namespace CapMobileWebApp.Controllers
         }
 
         // GET: CashFlowSalaries/Create
-        public IActionResult Create()
+        //public IActionResult Create()
+        //{
+        //    var user = this._userService.GetUserInfo(User);
+        //    if(user != null)
+        //    {
+        //        ViewData["CustomerId"] = new SelectList(_context.Customer
+        //        .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName");
+        //    }
+        //    else
+        //    {
+        //        ViewData["CustomerId"] = new SelectList(new List<Customer>());
+        //    }
+            
+        //    return View();
+        //}
+        public IActionResult Create(int customerid)
         {
             var user = this._userService.GetUserInfo(User);
-            if(user != null)
+            if (user != null)
             {
                 ViewData["CustomerId"] = new SelectList(_context.Customer
-                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName");
+                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName", customerid);
             }
             else
             {
                 ViewData["CustomerId"] = new SelectList(new List<Customer>());
             }
-            
+            if(customerid != null)
+            {
+                var cust = _context.CashFlowSalary.Where(e => e.CustomerId == customerid).FirstOrDefault();
+                if(cust != null)
+                {
+                    return View(cust);
+                }
+            }
+
             return View();
         }
 
@@ -73,11 +96,25 @@ namespace CapMobileWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cashFlowSalary);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (cashFlowSalary.Id > 0)
+                {
+                    _context.Update(cashFlowSalary);
+                }
+                else if (cashFlowSalary.Id == 0)
+                {
+                    _context.Add(cashFlowSalary);
+                }
+                else
+                {
+                    ModelState.AddModelError("NoID", "No cashflow id found.");
+                    return View(cashFlowSalary);
+
+                }
+                await _context.SaveChangesAsync(); 
+                return RedirectToAction("Index", "Home");
+
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "City", cashFlowSalary.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerName", cashFlowSalary.CustomerId);
             return View(cashFlowSalary);
         }
 

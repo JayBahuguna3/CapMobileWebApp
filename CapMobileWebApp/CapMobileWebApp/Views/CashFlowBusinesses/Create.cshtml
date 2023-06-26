@@ -14,13 +14,14 @@
                     <!-- left column -->
                     <div class="col-md-9">
                         <!-- general form elements -->
-                        < class="card card-primary">
+                        <div class="card card-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Cashflow Salaries</h3>
+                            <h3 class="card-title">Cashflow Business</h3>
                         </div>
                         <form asp-action="Create">
                             <div class="card-body">
                                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
                                 <div class="form-group">
                                     <label asp-for="IncomingCash" class="control-label"></label>
                                     <input asp-for="IncomingCash" class="form-control" />

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using CapMobileWebApp.DAL.Context;
 using CapMobileWebApp.DAL.Model;
+using CapMobileWebApp.Services;
 
 namespace CapMobileWebApp.Controllers
 {
@@ -14,7 +15,8 @@ namespace CapMobileWebApp.Controllers
     {
         private readonly CapRetailContext _context;
 
-        public CashFlowBusinessesController(CapRetailContext context)
+        public CashFlowBusinessesController(CapRetailContext context, UserService userService)
+             : base(userService)
         {
             _context = context;
         }
@@ -46,9 +48,27 @@ namespace CapMobileWebApp.Controllers
         }
 
         // GET: CashFlowBusinesses/Create
-        public IActionResult Create()
+        public IActionResult Create(int customerid)
         {
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "City");
+            var user = this._userService.GetUserInfo(User);
+            if (user != null)
+            {
+                ViewData["CustomerId"] = new SelectList(_context.Customer
+                .Where(e => e.CreatedBy == user.UserId), "CustomerId", "CustomerName", customerid);
+            }
+            else
+            {
+                ViewData["CustomerId"] = new SelectList(new List<Customer>());
+            }
+            if (customerid != null)
+            {
+                var cust = _context.CashFlowBusiness.Where(e => e.CustomerId == customerid).FirstOrDefault();
+                if (cust != null)
+                {
+                    return View(cust);
+                }
+            }
+
             return View();
         }
 
@@ -61,11 +81,25 @@ namespace CapMobileWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(cashFlowBusiness);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if(cashFlowBusiness.Id > 0)
+                {
+                    _context.Update(cashFlowBusiness);
+                }
+                else if (cashFlowBusiness.Id == 0)
+                {
+                    _context.Add(cashFlowBusiness);
+                }
+                else
+                {
+                    ModelState.AddModelError("NoID", "No cashflow id found.");
+                    return View(cashFlowBusiness);
+
+                }
+                await _context.SaveChangesAsync(); 
+                return RedirectToAction("Index", "Home");
+
             }
-            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "City", cashFlowBusiness.CustomerId);
+            ViewData["CustomerId"] = new SelectList(_context.Customer, "CustomerId", "CustomerName", cashFlowBusiness.CustomerId);
             return View(cashFlowBusiness);
         }
 
